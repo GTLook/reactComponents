@@ -1,13 +1,13 @@
 import React from 'react';
 import Messages from './Messages'
 
-render(){
+const MessageList = () => {
   return (
     <div>
       <Messages />
     </div>
     )
   }
-}
+
 
 export default MessageList

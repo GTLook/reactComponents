@@ -67,8 +67,21 @@ const inbox = [
 class Inbox extends Component {
   constructor(props){
     super(props)
+    this.state = {inbox: inbox}
+  }
 
-    this.state = { inbox: inbox}
+  handleCheckBox = () => {
+    const newInbox = this.state.inbox.map(ele => ele.id === id ? {...ele, checked} : {...ele})
+    this.setState({inbox: newInbox})
+  }
+
+  handleCheckBoxAll = () => {
+    this.setState({inbox: this.state.inbox.map(ele => ({...ele, checked}))})
+  }
+
+  handleDelete = () => {
+    const newDelete = this.state.inbox.filter(ele => !ele.checked)
+    this.setState({inbox: newDelete})
   }
 
   render(){

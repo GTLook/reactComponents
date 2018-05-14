@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Message = ({item:{id, text, checked, isRead, isStar}, handleCheckBox}) => {
+const Message = ({item:{id, text, checked, read, starred}, handleCheckBox}) => {
   return (
-    <div className={["row message", isRead?'unread':'read', checked?'selected':''].join(' ')}>
+    <div className={["row message", read?'unread':'read', checked?'selected':''].join(' ')}>
       <div className="col-xs-1">
         <div className="row">
           <div className="col-xs-2">
@@ -13,7 +13,7 @@ const Message = ({item:{id, text, checked, isRead, isStar}, handleCheckBox}) => 
             />
           </div>
           <div className="col-xs-2">
-            <i className={["star", "fa", isStar?"fa-star":"fa-star-o"].join(' ')}></i>
+            <i className={["star", "fa", starred?"fa-star":"fa-star-o"].join(' ')}></i>
           </div>
         </div>
       </div>
