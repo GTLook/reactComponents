@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import shortid from 'shortid'
 import Toolbar from './Toolbar'
 import MessageList from './MessageList'
+import ComposeMessage from './ComposeMessage'
 
 const inbox = [
   {
@@ -67,7 +68,7 @@ const inbox = [
 class Inbox extends Component {
   constructor(props){
     super(props)
-    this.state = {inbox: inbox}
+    this.state = {inbox: inbox, showCompose: false}
   }
 
   handleSubmit = (event) => {
@@ -105,18 +106,38 @@ class Inbox extends Component {
   }
 
   handleAddTag = (label) => {
-    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, labels:[...ele.labels, label]} : {...ele})})
+    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, labels:[...ele.labels, ele.labels.some(ele => ele==label)?null:label]} : {...ele})})
   }
 
   handleRemoveTag = (label) => {
-    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, labels:[!ele.labels.filter(item => item === label)]} : {...ele})})
+    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, labels:[ele.labels.filter(item => item !== label)]} : {...ele})})
   }
+
+  handleCompose = () => {
+    this.setState({showCompose: !this.state.showCompose})
+  }
+
 
   render(){
     return (
       <div>
-        <Toolbar inbox={this.state.inbox} handleCheckBoxAll={this.handleCheckBoxAll} handleMarkAsRead={this.handleMarkAsRead} handleMarkAsUnread={this.handleMarkAsUnread} handleDelete={this.handleDelete} handleAddTag={this.handleAddTag} handleRemoveTag={this.handleRemoveTag}/>
-        <MessageList inbox={this.state.inbox} handleCheckBox={this.handleCheckBox} handleStar={this.handleStar} />
+        <Toolbar
+          inbox={this.state.inbox}
+          showCompose={this.state.showCompose}
+          handleCheckBoxAll={this.handleCheckBoxAll}
+          handleMarkAsRead={this.handleMarkAsRead}
+          handleMarkAsUnread={this.handleMarkAsUnread}
+          handleDelete={this.handleDelete}
+          handleAddTag={this.handleAddTag}
+          handleRemoveTag={this.handleRemoveTag}
+          handleCompose={this.handleCompose}
+        />
+        {this.state.showCompose? <ComposeMessage /> : null}
+        <MessageList
+          inbox={this.state.inbox}
+          handleCheckBox={this.handleCheckBox}
+          handleStar={this.handleStar}
+        />
       </div>
     )
   }

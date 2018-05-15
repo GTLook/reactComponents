@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Toolbar = ({inbox, handleCheckBoxAll, handleMarkAsRead, handleMarkAsUnread, handleDelete, handleAddTag, handleRemoveTag }) => {
+const Toolbar = ({inbox, showCompose, handleCheckBoxAll, handleMarkAsRead, handleMarkAsUnread, handleDelete, handleAddTag, handleRemoveTag, handleCompose }) => {
 
   const iconCheckAll = (inbox) => {
     if(inbox.every(obj => obj['selected'])) return "fa-check-square-o"
@@ -16,14 +16,12 @@ const Toolbar = ({inbox, handleCheckBoxAll, handleMarkAsRead, handleMarkAsUnread
           unread messages
         </p>
 
-        <a class="btn btn-danger">
-          <i class="fa fa-plus"/>
+        <a className="btn btn-danger"onClick={() => handleCompose()}>
+          <i className={["fa",(showCompose)?'fa-minus':"fa-plus"].join(' ')}/>
         </a>
 
         <button className="btn btn-default" onClick={() => handleCheckBoxAll()}>
-          <i
-            className={["fa", iconCheckAll(inbox)].join(" ")}
-          />
+          <i className={["fa", iconCheckAll(inbox)].join(" ")}/>
         </button>
 
         <button className="btn btn-default" onClick={() => handleMarkAsRead()}>
@@ -34,14 +32,14 @@ const Toolbar = ({inbox, handleCheckBoxAll, handleMarkAsRead, handleMarkAsUnread
           Mark As Unread
         </button>
 
-        <select className="form-control label-select" onChange={(event) => handleAddTag(event.target.value)}>
+        <select className="form-control label-select" onClick={(event) => handleAddTag(event.target.value)}>
           <option>Apply label</option>
           <option value="dev">dev</option>
           <option value="personal">personal</option>
           <option value="gschool">gschool</option>
         </select>
 
-        <select className="form-control label-select" onChange={(event) => handleRemoveTag(event.target.value)}>
+        <select className="form-control label-select" onClick={(event) => handleRemoveTag(event.target.value)}>
           <option>Remove label</option>
           <option value="dev">dev</option>
           <option value="personal">personal</option>
