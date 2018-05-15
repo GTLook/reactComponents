@@ -1,10 +1,14 @@
 import React from 'react';
-import Messages from './Messages'
+import Message from './Message'
 
-const MessageList = () => {
+const MessageList = ({inbox, handleCheckBox, handleStar}) => {
   return (
     <div>
-      <Messages />
+      {
+        inbox.map((item, id) => (
+          <Message key={item.id} inbox={item} handleCheckBox={handleCheckBox} handleStar={handleStar}/>
+        ))
+      }
     </div>
     )
   }

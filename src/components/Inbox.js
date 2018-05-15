@@ -70,28 +70,56 @@ class Inbox extends Component {
     this.state = {inbox: inbox}
   }
 
-  handleCheckBox = () => {
-    const newInbox = this.state.inbox.map(ele => ele.id === id ? {...ele, checked} : {...ele})
+  handleSubmit = (event) => {
+    event.preventDefault()
+    const newMail = { id: shortid.generate(), task: event.target.newMail.value, checked: false}
+    this.setState({ inbox: [...this.state.inbox, newMail ] })
+  }
+
+  handleCheckBox = (id, selected) => {
+    const newInbox = this.state.inbox.map(ele => ele.id === id ? {...ele, selected} : {...ele})
     this.setState({inbox: newInbox})
   }
 
-  handleCheckBoxAll = () => {
-    this.setState({inbox: this.state.inbox.map(ele => ({...ele, checked}))})
+  handleStar = (id) => {
+    const newInbox = this.state.inbox.map(ele => ele.id === id ? {...ele, starred: !ele.starred} : {...ele})
+    this.setState({inbox: newInbox})
+  }
+
+  handleCheckBoxAll = (id) => {
+    let selectAll = (((this.state.inbox.some(obj => obj['selected'])) || (this.state.inbox.every(obj => !obj['selected']))) && !(this.state.inbox.every(obj => obj['selected'])))
+    const newInbox = this.state.inbox.map(ele =>  selectAll ? {...ele, selected:true} : {...ele, selected:false})
+    this.setState({inbox: newInbox})
   }
 
   handleDelete = () => {
-    const newDelete = this.state.inbox.filter(ele => !ele.checked)
-    this.setState({inbox: newDelete})
+    this.setState({inbox: this.state.inbox.filter(ele => !ele['selected'])})
+  }
+
+  handleMarkAsRead = () => {
+    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, read:true} : {...ele})})
+  }
+
+  handleMarkAsUnread = () => {
+    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, read:false} : {...ele})})
+  }
+
+  handleAddTag = (label) => {
+    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, labels:[...ele.labels, label]} : {...ele})})
+  }
+
+  handleRemoveTag = (label) => {
+    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, labels:[!ele.labels.filter(item => item === label)]} : {...ele})})
   }
 
   render(){
     return (
       <div>
-        <Toolbar handleCheckBoxAll={this.handleCheckBoxAll} handleDelete={this.handleDelete}/>
-        <MessageList todo={this.state.todo} handleCheckBox={this.handleCheckBox}/>
+        <Toolbar inbox={this.state.inbox} handleCheckBoxAll={this.handleCheckBoxAll} handleMarkAsRead={this.handleMarkAsRead} handleMarkAsUnread={this.handleMarkAsUnread} handleDelete={this.handleDelete} handleAddTag={this.handleAddTag} handleRemoveTag={this.handleRemoveTag}/>
+        <MessageList inbox={this.state.inbox} handleCheckBox={this.handleCheckBox} handleStar={this.handleStar} />
       </div>
     )
   }
 }
 
-export default Todo
+export default Inbox
