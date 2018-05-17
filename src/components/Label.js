@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Label = ({label}) => {
+const Label = ({label }) => {
   return (
       <span className="label label-warning">{ label }</span>
     )

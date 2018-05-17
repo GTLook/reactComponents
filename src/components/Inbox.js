@@ -1,90 +1,65 @@
 import React, { Component } from 'react'
 import shortid from 'shortid'
+import axios from 'axios'
+
 import Toolbar from './Toolbar'
 import MessageList from './MessageList'
 import ComposeMessage from './ComposeMessage'
 
-const inbox = [
-  {
-    "id": 1,
-    "subject": "You can't input the protocol without calculating the mobile RSS protocol!",
-    "read": false,
-    "starred": true,
-    "labels": ["dev", "personal"]
-  },
-  {
-    "id": 2,
-    "subject": "connecting the system won't do anything, we need to input the mobile AI panel!",
-    "read": false,
-    "starred": false,
-    "selected": true,
-    "labels": []
-  },
-  {
-    "id": 3,
-    "subject": "Use the 1080p HTTP feed, then you can parse the cross-platform hard drive!",
-    "read": false,
-    "starred": true,
-    "labels": ["dev"]
-  },
-  {
-    "id": 4,
-    "subject": "We need to program the primary TCP hard drive!",
-    "read": true,
-    "starred": false,
-    "selected": true,
-    "labels": []
-  },
-  {
-    "id": 5,
-    "subject": "If we override the interface, we can get to the HTTP feed through the virtual EXE interface!",
-    "read": false,
-    "starred": false,
-    "labels": ["personal"]
-  },
-  {
-    "id": 6,
-    "subject": "We need to back up the wireless GB driver!",
-    "read": true,
-    "starred": true,
-    "labels": []
-  },
-  {
-    "id": 7,
-    "subject": "We need to index the mobile PCI bus!",
-    "read": true,
-    "starred": false,
-    "labels": ["dev", "personal"]
-  },
-  {
-    "id": 8,
-    "subject": "If we connect the sensor, we can get to the HDD port through the redundant IB firewall!",
-    "read": true,
-    "starred": true,
-    "labels": []
-  }
-]
+const getSelected = (inbox) => inbox.filter(ele => ele['selected']).map(obj => obj.id)
 
 class Inbox extends Component {
   constructor(props){
     super(props)
-    this.state = {inbox: inbox, showCompose: false}
+    this.state = {
+      inbox: [],
+      showCompose: false
+    }
   }
 
-  handleSubmit = (event) => {
-    event.preventDefault()
-    const newMail = { id: shortid.generate(), task: event.target.newMail.value, checked: false}
-    this.setState({ inbox: [...this.state.inbox, newMail ] })
+  componentDidMount = () => {
+    this.getData()
   }
+
+  getData = () => {
+    axios.get('http://localhost:8082/api/messages')
+    .then((result) => this.setState({inbox: result.data}))
+    .catch(console.error())
+  }
+
+// postData = ({subject, body}) => {
+//   axios.post('http://localhost:8082/api/messages', {subject, body})
+//   .then((result) => console.log(result))
+//   .catch(console.error())
+// }
+
+// patchData = () => {
+//   axios.patch('http://localhost:8082/api/messages',{
+//     command: '',
+//     []
+//   })
+//   .then(console.log(result))
+//   .catch(error)
+// }
+
+// handleSubmit = (event) => {
+//   event.preventDefault()
+//   patchData({ id: shortid.generate(), task: event.target.newMail.value, checked: false})
+//   this.setState({ inbox: [...this.state.inbox, newMail ] })
+// }
 
   handleCheckBox = (id, selected) => {
+    // axios.patch('http://localhost:8082/api/messages', {messageIds: [id], command:'selected'})
+    // .then(() => this.getData())
     const newInbox = this.state.inbox.map(ele => ele.id === id ? {...ele, selected} : {...ele})
     this.setState({inbox: newInbox})
   }
 
   handleStar = (id) => {
-    const newInbox = this.state.inbox.map(ele => ele.id === id ? {...ele, starred: !ele.starred} : {...ele})
-    this.setState({inbox: newInbox})
+    axios.patch('http://localhost:8082/api/messages', {messageIds: [id], command:'star'})
+    .then(() => this.getData())
+    //const newInbox = this.state.inbox.map(ele => ele.id === id ? {...ele, starred: !ele.starred} : {...ele})
+    //this.setState({inbox: newInbox})
   }
 
   handleCheckBoxAll = (id) => {
@@ -94,23 +69,30 @@ class Inbox extends Component {
   }
 
   handleDelete = () => {
-    this.setState({inbox: this.state.inbox.filter(ele => !ele['selected'])})
+    axios.delete('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'delete'})
+    .then(() => this.getData())
+    //this.setState({inbox: this.state.inbox.filter(ele => !ele['selected'])})
   }
 
   handleMarkAsRead = () => {
-    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, read:true} : {...ele})})
+    axios.patch('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'read'})
+    .then(() => this.getData())
+    //this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, read:true} : {...ele})})
   }
 
   handleMarkAsUnread = () => {
-    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, read:false} : {...ele})})
+    axios.patch('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'unread'})
+    .then(() => this.getData())
+    //this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, read:false} : {...ele})})
   }
 
   handleAddTag = (label) => {
-    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, labels:[...ele.labels, ele.labels.some(ele => ele==label)?null:label]} : {...ele})})
+
+    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, labels:[...ele.labels, ele.labels.some(ele => ele==label)?null:(label !== 'Apply label')?label:null]} : {...ele})})
   }
 
   handleRemoveTag = (label) => {
-    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, labels:[ele.labels.filter(item => item !== label)]} : {...ele})})
+    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, labels:ele.labels.filter(item => item !== label)} : {...ele})})
   }
 
   handleCompose = () => {
@@ -118,7 +100,7 @@ class Inbox extends Component {
   }
 
 
-  render(){
+   render(){
     return (
       <div>
         <Toolbar

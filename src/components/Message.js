@@ -13,9 +13,9 @@ class Message extends Component{
 
     return (
       <div>
-        <div className={["row message", read?'unread':'read', selected?'selected':''].join(' ')} onClick={() => this.showMessage = !this.state.showMessage}>
+        <div className={["row message", read?'unread':'read', selected?'selected':''].join(' ')} >
           <div className="col-xs-1">
-            <div className="row" >
+            <div className="row">
               <div className="col-xs-2">
                 <input
                   type="checkbox"
@@ -25,13 +25,13 @@ class Message extends Component{
               </div>
               <div className="col-xs-2">
                 <i
-                className={["star", "fa", starred?"fa-star":"fa-star-o"].join(' ')}
-                onClick={(event) => handleStar(id)}
-               />
-           </div>
+                  className={["star", "fa", starred?"fa-star":"fa-star-o"].join(' ')}
+                  onClick={(event) => handleStar(id)}
+                />
+              </div>
             </div>
           </div>
-          <div className="col-xs-11">
+          <div className="col-xs-11" onClick={() => {this.setState({showMessage: !(this.state.showMessage)})}}>
             {labels.map(label => <Label label={label} />)}
             <a href="#">
               { subject }
