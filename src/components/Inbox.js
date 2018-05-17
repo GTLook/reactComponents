@@ -69,31 +69,33 @@ class Inbox extends Component {
   }
 
   handleDelete = () => {
-    axios.delete('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'delete'})
+    axios.patch('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'delete'})
     .then(() => this.getData())
     //this.setState({inbox: this.state.inbox.filter(ele => !ele['selected'])})
   }
 
   handleMarkAsRead = () => {
-    axios.patch('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'read'})
+    axios.patch('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'read', read:true})
     .then(() => this.getData())
     //this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, read:true} : {...ele})})
   }
 
   handleMarkAsUnread = () => {
-    axios.patch('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'unread'})
+    axios.patch('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'read', read:false})
     .then(() => this.getData())
     //this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, read:false} : {...ele})})
   }
 
   handleAddTag = (label) => {
-
-    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, labels:[...ele.labels, ele.labels.some(ele => ele==label)?null:(label !== 'Apply label')?label:null]} : {...ele})})
+    axios.patch('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'addLabel', label:label})
+    .then(() => this.getData())
+    // this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, labels:[...ele.labels, ele.labels.some(ele => ele==label)?null:(label !== 'Apply label')?label:null]} : {...ele})})
   }
 
   handleRemoveTag = (label) => {
-    this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, labels:ele.labels.filter(item => item !== label)} : {...ele})})
-  }
+    axios.patch('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'removeLabel', label:label})
+    .then(() => this.getData())
+    }
 
   handleCompose = () => {
     this.setState({showCompose: !this.state.showCompose})
