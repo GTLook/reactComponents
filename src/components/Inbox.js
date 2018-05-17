@@ -49,8 +49,6 @@ class Inbox extends Component {
 // }
 
   handleCheckBox = (id, selected) => {
-    // axios.patch('http://localhost:8082/api/messages', {messageIds: [id], command:'selected'})
-    // .then(() => this.getData())
     const newInbox = this.state.inbox.map(ele => ele.id === id ? {...ele, selected} : {...ele})
     this.setState({inbox: newInbox})
   }
@@ -58,8 +56,6 @@ class Inbox extends Component {
   handleStar = (id) => {
     axios.patch('http://localhost:8082/api/messages', {messageIds: [id], command:'star'})
     .then(() => this.getData())
-    //const newInbox = this.state.inbox.map(ele => ele.id === id ? {...ele, starred: !ele.starred} : {...ele})
-    //this.setState({inbox: newInbox})
   }
 
   handleCheckBoxAll = (id) => {
@@ -71,25 +67,21 @@ class Inbox extends Component {
   handleDelete = () => {
     axios.patch('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'delete'})
     .then(() => this.getData())
-    //this.setState({inbox: this.state.inbox.filter(ele => !ele['selected'])})
   }
 
   handleMarkAsRead = () => {
     axios.patch('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'read', read:true})
     .then(() => this.getData())
-    //this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, read:true} : {...ele})})
   }
 
   handleMarkAsUnread = () => {
     axios.patch('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'read', read:false})
     .then(() => this.getData())
-    //this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, read:false} : {...ele})})
   }
 
   handleAddTag = (label) => {
     axios.patch('http://localhost:8082/api/messages', {messageIds: getSelected(this.state.inbox), command:'addLabel', label:label})
     .then(() => this.getData())
-    // this.setState({inbox: this.state.inbox.map(ele => ele['selected'] ? {...ele, labels:[...ele.labels, ele.labels.some(ele => ele==label)?null:(label !== 'Apply label')?label:null]} : {...ele})})
   }
 
   handleRemoveTag = (label) => {
