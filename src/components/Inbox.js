@@ -27,11 +27,14 @@ class Inbox extends Component {
     .catch(console.error())
   }
 
-// postData = ({subject, body}) => {
-//   axios.post('http://localhost:8082/api/messages', {subject, body})
-//   .then((result) => console.log(result))
-//   .catch(console.error())
-// }
+  handleSubmit = (event) => {
+
+    console.log(event.target.subject.value);
+    console.log(event.target.body.value);
+    axios.post('http://localhost:8082/api/messages', {subject: event.target.subject.value, body: event.target.body.value})
+    .then(() => this.getData())
+    .catch(console.error())
+  }
 
 // patchData = () => {
 //   axios.patch('http://localhost:8082/api/messages',{
@@ -93,7 +96,6 @@ class Inbox extends Component {
     this.setState({showCompose: !this.state.showCompose})
   }
 
-
    render(){
     return (
       <div>
@@ -108,7 +110,7 @@ class Inbox extends Component {
           handleRemoveTag={this.handleRemoveTag}
           handleCompose={this.handleCompose}
         />
-        {this.state.showCompose? <ComposeMessage /> : null}
+        {this.state.showCompose? <ComposeMessage handleSubmit={this.handleSubmit}/> : null}
         <MessageList
           inbox={this.state.inbox}
           handleCheckBox={this.handleCheckBox}
